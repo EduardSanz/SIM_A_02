@@ -14,6 +14,7 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.cieep.sim_a_02.MainActivity;
 import com.cieep.sim_a_02.R;
 import com.cieep.sim_a_02.modelos.Producto;
 
@@ -27,6 +28,7 @@ public class ProductosAdapter extends RecyclerView.Adapter<ProductosAdapter.Prod
     private List<Producto> objects;
     private int resource; // XML de la fila (card)
     private Context context;
+    private MainActivity main;
 
     private NumberFormat numberFormat;
 
@@ -34,6 +36,7 @@ public class ProductosAdapter extends RecyclerView.Adapter<ProductosAdapter.Prod
         this.objects = objects;
         this.resource = resource;
         this.context = context;
+        this.main = (MainActivity) context;
         numberFormat = NumberFormat.getCurrencyInstance();
     }
 
@@ -101,6 +104,7 @@ public class ProductosAdapter extends RecyclerView.Adapter<ProductosAdapter.Prod
                     p.setCantidad(Integer.parseInt(txtCantidad.getText().toString()));
                     p.setPrecio(Float.parseFloat(txtPrecio.getText().toString()));
                     notifyItemChanged(position);
+                    main.calculaImportes();
                 }
             }
         });
@@ -119,6 +123,7 @@ public class ProductosAdapter extends RecyclerView.Adapter<ProductosAdapter.Prod
             public void onClick(DialogInterface dialogInterface, int i) {
                 objects.remove(p);
                 notifyItemRemoved(position);
+                main.calculaImportes();
             }
         });
         return builder.create();

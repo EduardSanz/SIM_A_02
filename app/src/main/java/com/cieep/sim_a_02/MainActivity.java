@@ -24,6 +24,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Toast;
 
+import java.text.NumberFormat;
 import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity {
@@ -41,16 +42,20 @@ public class MainActivity extends AppCompatActivity {
     private ProductosAdapter adapter;
     private RecyclerView.LayoutManager lm;
 
+    private NumberFormat nf;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         binding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
-
+        productosList = new ArrayList<>();
         inicializaLauncher();
+        nf = NumberFormat.getCurrencyInstance();
+        calculaImportes();
 
         setSupportActionBar(binding.toolbar);
-        productosList = new ArrayList<>();
+
         adapter = new ProductosAdapter(productosList, R.layout.producto_view_holder, this);
         lm  = new GridLayoutManager(this, 1);
         binding.contentMain.contentenedor.setAdapter(adapter);
@@ -77,6 +82,7 @@ public class MainActivity extends AppCompatActivity {
                                 Producto p = (Producto) result.getData().getExtras().getSerializable("PROD");
                                 productosList.add(p);
                                 adapter.notifyItemInserted(productosList.size()-1);
+                                calculaImportes();
                             }
                             else {
                                 Toast.makeText(MainActivity.this, "NO HAY DATOS", Toast.LENGTH_SHORT).show();
@@ -87,5 +93,15 @@ public class MainActivity extends AppCompatActivity {
         );
     }
 
+    public void calculaImportes() {
+        int cantidad = 0;
+        float precio = 0;
+        for (Producto p: productosList) {
+            cantidad += p.getCantidad();
+            precio += p.getPrecio() * p.getCantidad();
+        }
+        binding.contentMain.lblCantidad.setText(String.valueOf(cantidad));
+        binding.contentMain.lblImporte.setText( nf.format(precio) );
+    }
 
 }
